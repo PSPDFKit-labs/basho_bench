@@ -255,6 +255,11 @@ worker_next_op(State) ->
     Result = worker_next_op2(State, OpTag),
     ElapsedUs = erlang:max(0, timer:now_diff(os:timestamp(), Start)),
     case Result of
+        skip ->
+            %% The op is not ready to be executed. We skip it and don't record any statistical data
+            %% about it this time.
+            {ok, State};
+
         {Res, DriverState} when Res == ok orelse element(1, Res) == ok ->
             basho_bench_stats:op_complete(Next, Res, ElapsedUs),
             {ok, State#state { driver_state = DriverState}};
