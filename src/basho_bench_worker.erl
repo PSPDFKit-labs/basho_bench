@@ -278,7 +278,7 @@ worker_next_op(State) ->
         {'EXIT', Reason} ->
             %% Driver crashed, generate a crash error and terminate. This will take down
             %% the corresponding worker which will get restarted by the appropriate supervisor.
-            basho_bench_stats:op_complete(Next, {error, crash}, ElapsedUs),
+            basho_bench_stats:op_complete(Next, {error, {crash, Reason}}, ElapsedUs),
 
             %% Give the driver a chance to cleanup
             (catch (State#state.driver):terminate({'EXIT', Reason}, State#state.driver_state)),
